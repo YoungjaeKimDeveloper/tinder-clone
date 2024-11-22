@@ -39,7 +39,7 @@ const userShema = new mongoose.Schema({
       ref: "User",
     },
   ],
-  dislike: [
+  dislikes: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
