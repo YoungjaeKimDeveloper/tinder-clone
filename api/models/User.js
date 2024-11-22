@@ -63,7 +63,7 @@ userShema.pre("save", async function (next) {
 // Compare the saved password and enteredPassword
 // Add the matches funciton to Schema
 userShema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare((enteredPassword, this.password));
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 export const User = mongoose.model("User", userShema);

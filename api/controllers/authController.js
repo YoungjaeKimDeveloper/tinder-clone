@@ -29,14 +29,14 @@ export const signup = async (req, res) => {
         message: "THE PASSWORD SHOULD BE AT LEAST MORE THAN 6 LETTERS",
       });
     }
-    const newUser = await User.create(
+    const newUser = await User.create({
       name,
       email,
       password,
       age,
       gender,
-      genderPreference
-    );
+      genderPreference,
+    });
     // Check the Token to verift the user
     const token = signToToken(newUser._id);
     // BASIC SETTING FOR COOKIE
@@ -49,7 +49,9 @@ export const signup = async (req, res) => {
       sameSite: "strict",
       secure: process.env.NODE_ENV == "production",
     });
+
     newUser.save();
+    console.log("NEW ACCOUNT HAS BEEN CREATED SUCCESSFULLY");
     res.status(201).json({
       success: true,
       message: "New Account has been created",
@@ -61,6 +63,41 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {};
+export const login = async (req, res) => {
+  // 값 가져오기
+  const { email, password } = req.body;
+  try {
+    if (!email || !password) {
+      res
+        .status(400)
+        .json({ success: false, message: "PLEASE FILL UP THE ALL FORM" });
+    }
+    // User 찾기
+    const currentUser = await User.findOne({ email }).select("+password");
+    if (!currentUser || !(await currentUser.matchPassword(password))) {
+      console.log("Sign in ERROR ", error.message);
+      res.status(400).send({ message: "Cannot Find the User" });
+    }
+    // Token보내주기
+    const token = signToToken(currentUser._id);
+    res.cookie("jwt", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production", // 7 days in milliseconds
+    });
+    res.status(200).json({
+      success: true,
+      user: currentUser,
+    });
+  } catch (error) {
+    console.log("Sign in ERROR ", error.message);
+    res.status(400).send({ message: "Fail to Login" });
+  }
+};
 
-export const logout = async (req, res) => {};
+export const logout = async (req, res) => {
+  console.log("LOGOUT Successfully");
+  res.clearCookie("jwt");
+  res.status(200).json({ success: true, message: "LOGOUT SUCCESSFULLY" });
+};
