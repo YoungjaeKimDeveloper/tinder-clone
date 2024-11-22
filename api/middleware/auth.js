@@ -3,6 +3,7 @@ import { User } from "../models/User.js";
 
 // 토큰 체크하기
 export const protectRoute = async (req, res, next) => {
+  // COOKIE 안에 있는 JWWT
   const token = req.cookies.jwt;
   try {
     // 토큰이 없는경우

@@ -8,6 +8,7 @@ router.post("/signup", signup); // test with postman
 router.post("/login", login);
 router.post("/logout", logout);
 
+// 유저 정보 보내주기
 router.get("/me", protectRoute, (req, res) => {
   res.send({
     success: true,
