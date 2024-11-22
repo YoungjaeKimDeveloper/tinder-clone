@@ -2,6 +2,7 @@ import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 // 이제 여기에서부터 각각의 Routes에 대응하는 Controller를 만들어주면된다.
+// decoded할때 code한거랑 같이 맞춰서 요소넣어주기
 const signToToken = (id) => {
   // JWT TOKEN GENERATION
   return jwt.sign({ id }, process.env.SECRETKEY, {
